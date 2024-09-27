@@ -12,8 +12,9 @@ with open('{}/databases/movies.json'.format("."), 'r') as jsf:
 
 
 def write(movies):
+    data = {"movies": movies}
     with open('{}/databases/movies.json'.format("."), 'w') as f:
-        json.dump(movies, f)
+        json.dump(data, f, ident=4)
 
 
 # root message
