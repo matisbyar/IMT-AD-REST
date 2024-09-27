@@ -32,9 +32,9 @@ def get_json():
 def get_movie_byid(movieid):
     for movie in movies:
         if str(movie["id"]) == str(movieid):
-            res = make_response(jsonify(movie),200)
+            res = make_response(jsonify(movie), 200)
             return res
-    return make_response(jsonify({"error":"Movie ID not found"}),400)
+    return make_response(jsonify({"error": "Movie ID not found"}), 400)
 
 
 @app.route("/moviesbytitle", methods=['GET'])
@@ -88,6 +88,20 @@ def del_movie(movieid):
 
     res = make_response(jsonify({"error": "movie ID not found"}), 400)
     return res
+
+
+@app.route("/help", methods=['GET'])
+def get_help_movies():
+    help = [
+        {"path_and_method": "GET /json", "description": "Get all movies"},
+        {"path_and_method": "GET /movies/<movieid>", "description": "Get movie by ID"},
+        {"path_and_method": "GET /moviesbytitle?title=<title>", "description": "Get movie by title"},
+        {"path_and_method": "POST /movie/<movieid>", "description": "Add movie by ID"},
+        {"path_and_method": "PUT /movies/<movieid>/<rate>", "description": "Update movie rating by ID"},
+        {"path_and_method": "DELETE /movies/<movieid>", "description": "Delete movie by ID"},
+        {"path_and_method": "GET /help", "description": "Get help"}
+    ]
+    return make_response(jsonify(help), 200)
 
 
 if __name__ == "__main__":
