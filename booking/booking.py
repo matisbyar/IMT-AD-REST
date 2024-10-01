@@ -44,9 +44,11 @@ def get_bookings_byuserid(userid):
 @app.route("/bookings/<userid>", methods=['POST'])
 def add_booking(userid):
     req = request.get_json()
-    bookings.append(req)
+
+    date = req["date"]
+    movieid = req["movieid"]
+
     # todo: check with the showtimes service if the booking is valid
-    write(bookings)
     return make_response(jsonify({"message": "Booking added"}), 200)
 
 
