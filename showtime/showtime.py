@@ -12,7 +12,19 @@ with open('{}/databases/times.json'.format("."), "r") as jsf:
 
 @app.route("/", methods=['GET'])
 def home():
-   return "<h1 style='color:blue'>Welcome to the Showtime service!</h1>"
+   return make_response("<h1 style='color:blue'>Welcome to the Showtime service!</h1>", 200)
+
+@app.route("/showtimes", methods=['GET'])
+def get_schedule():
+   return make_response(jsonify(schedules),200)
+
+@app.route("/showmovies/<date>", methods=['GET'])
+def get_movie_bydate(date):
+    for schedule in schedules:
+        if str(schedule["date"]) == str(date):
+            res = make_response(jsonify(schedule), 200)
+            return res
+    return make_response(jsonify({"error": " bad input parameter"}), 400)
 
 if __name__ == "__main__":
    print("Server running in port %s"%(PORT))
