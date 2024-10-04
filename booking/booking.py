@@ -1,5 +1,6 @@
 import json
 
+import requests
 from flask import Flask, jsonify, make_response, request
 
 app = Flask(__name__)
@@ -14,7 +15,7 @@ with open('{}/databases/bookings.json'.format("."), "r") as jsf:
 def write(bookings):
     data = {"bookings": bookings}
     with open('{}/databases/bookings.json'.format("."), 'w') as f:
-        json.dump(data, f, ident=4)
+        json.dump(data, f)
 
 
 @app.route("/", methods=['GET'])
@@ -41,15 +42,42 @@ def get_bookings_byuserid(userid):
         res = make_response(jsonify(json), 200)
     return res
 
+
 @app.route("/bookings/<userid>", methods=['POST'])
-def add_booking(userid):
+def add_booking_byuser(userid):
     req = request.get_json()
+    date = req['date']
+    movie_id = req['movieid']
 
-    date = req["date"]
-    movieid = req["movieid"]
+    url = f"http://{request.remote_addr}:3202/showmovies/{date}"
 
-    # todo: check with the showtimes service if the booking is valid
-    return make_response(jsonify({"message": "Booking added"}), 200)
+    # get the showtimes information
+    showtimes = requests.get(url)
+
+    # check if the date exists
+    if showtimes.status_code == 200:
+        showtime_movies = showtimes.json()
+        movies = showtime_movies['movies']
+        for movie in movies:
+            if movie_id == movie:
+                user_entry = next((entry for entry in bookings if entry["userid"] == userid), None)
+                if user_entry is None:
+                    return make_response(jsonify({"error": "User ID not found"}), 400)
+                else:
+                    date_entry = next((entry for entry in user_entry["dates"] if entry["date"] == date), None)
+                    if date_entry is None:
+                        date_entry = {"date": date, "movies": [movie_id]}
+                        user_entry["dates"].append(date_entry)
+                    else:
+                        date_entry["movies"].append(movie_id)
+
+                #print({"bookings": bookings})
+                write(bookings)
+                return make_response(jsonify({"ok": "Booking created"}), 200)
+
+        return make_response(jsonify({"error": "An item already exists"}), 409)
+    else:
+        return make_response(jsonify({"error": "Couldn't add booking for the user"}), 400)
 
 
 if __name__ == "__main__":
