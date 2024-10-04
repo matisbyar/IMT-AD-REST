@@ -101,6 +101,9 @@ paths:
                 $ref: '#/components/schemas/BookingsUser'
         "409":
           description: an existing item already exists
+        "400":
+          description: Couldn't add the booking | User ID not found
+
 components:
   schemas:
     AllBookings:

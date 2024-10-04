@@ -24,7 +24,7 @@ def get_movie_bydate(date):
         if str(schedule["date"]) == str(date):
             res = make_response(jsonify(schedule), 200)
             return res
-    return make_response(jsonify({"error": " bad input parameter"}), 400)
+    return make_response(jsonify({"error": "bad input parameter"}), 400)
 
 if __name__ == "__main__":
    print("Server running in port %s"%(PORT))
