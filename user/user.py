@@ -60,6 +60,7 @@ def get_movies_from_usersbooking(userId):
 
             if movie_fetched.status_code == 200:
                 movies_detailed.append(movie_fetched.json()["movie"])
+                #todo: fix
                 print(movie_fetched.json()["movie"])
             else:
                 return make_response(jsonify({"error": "An error occurred while fetching a movie"}), 409)
