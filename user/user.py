@@ -37,36 +37,27 @@ def get_movies_from_usersbooking(userId):
     bookings_url = f"http://{request.remote_addr}:3201/bookings/{userId}"
     bookings = requests.get(bookings_url)
 
-    if bookings.status_code == 200:
-        bookings_list = bookings.json()
-
-        print(bookings_list)
-
-        movies = []
-        for booking in bookings_list["dates"]:
-            print(booking["movies"])
-            for movie in booking["movies"]:
-                movies.append(movie)
-
-        if len(movies) == 0:
-            return make_response(jsonify({"error": "User has no bookings"}), 409)
-
-        movies_detailed = []
-        for movie in movies:
-            print(movie)
-
-            movie_url =  f"http://{request.remote_addr}:3200/movie/{movie}"
-            movie_fetched = requests.get(movie_url)
-
-            if movie_fetched.status_code == 200:
-                movies_detailed.append(movie_fetched.json()["movie"])
-                #todo: fix
-                print(movie_fetched.json()["movie"])
-            else:
-                return make_response(jsonify({"error": "An error occurred while fetching a movie"}), 409)
-
-    else:
+    if bookings.status_code != 200:
         return make_response(jsonify({"error": "User has no bookings"}), 409)
+
+    bookings_list = bookings.json()
+    movies = [movie for booking in bookings_list["dates"] for movie in booking["movies"]]
+
+    if not movies:
+        return make_response(jsonify({"error": "User has no bookings"}), 409)
+
+    movies_detailed = []
+    for movie in movies:
+        movie_url = f"http://{request.remote_addr}:3200/movies/{movie}"
+        movie_fetched = requests.get(movie_url)
+
+        if movie_fetched.status_code == 200:
+            print(movie_fetched.json())
+            movies_detailed.append(movie_fetched.json())
+        else:
+            return make_response(jsonify({"error": "An error occurred while fetching a movie"}), 409)
+
+    return make_response(jsonify({"movies": movies_detailed}), 200)
 
 
 if __name__ == "__main__":
