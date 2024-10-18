@@ -51,10 +51,8 @@ def add_booking_byuser(userid):
 
     url = f"http://{request.remote_addr}:3202/showmovies/{date}"
 
-    # get the showtimes information
     showtimes = requests.get(url)
 
-    # check if the date exists
     if showtimes.status_code == 200:
         showtime_movies = showtimes.json()
         movies = showtime_movies['movies']
@@ -71,9 +69,8 @@ def add_booking_byuser(userid):
                     else:
                         date_entry["movies"].append(movie_id)
 
-                #print({"bookings": bookings})
                 write(bookings)
-                return make_response(jsonify({"ok": "Booking created"}), 200)
+                return make_response(jsonify({"success": "Booking created"}), 200)
 
         return make_response(jsonify({"error": "An item already exists"}), 409)
     else:
