@@ -8,11 +8,18 @@ app = Flask(__name__)
 PORT = 3201
 HOST = '0.0.0.0'
 
+# Load bookings data from JSON file
 with open('{}/databases/bookings.json'.format("."), "r") as jsf:
     bookings = json.load(jsf)["bookings"]
 
 
 def write(bookings):
+    """
+    Write the bookings data to the JSON file.
+
+    Args:
+        bookings (list): List of booking dictionaries.
+    """
     data = {"bookings": bookings}
     with open('{}/databases/bookings.json'.format("."), 'w') as f:
         json.dump(data, f)
@@ -20,17 +27,38 @@ def write(bookings):
 
 @app.route("/", methods=['GET'])
 def home():
+    """
+    Home route that returns a welcome message.
+
+    Returns:
+        str: HTML string with a welcome message.
+    """
     return "<h1 style='color:blue'>Welcome to the Booking service!</h1>"
 
 
 @app.route("/bookings", methods=['GET'])
 def get_json():
+    """
+    Route to get all bookings.
+
+    Returns:
+        Response: JSON response containing all bookings.
+    """
     res = make_response(jsonify(bookings), 200)
     return res
 
 
 @app.route("/bookings/<userid>", methods=['GET'])
 def get_bookings_byuserid(userid):
+    """
+    Route to get bookings by user ID.
+
+    Args:
+        userid (str): User ID to filter bookings.
+
+    Returns:
+        Response: JSON response containing bookings for the specified user ID or an error message.
+    """
     json = ""
     for booking in bookings:
         if str(booking["userid"]) == str(userid):
@@ -45,6 +73,15 @@ def get_bookings_byuserid(userid):
 
 @app.route("/bookings/<userid>", methods=['POST'])
 def add_booking_byuser(userid):
+    """
+    Route to add a booking for a user.
+
+    Args:
+        userid (str): User ID to add the booking for.
+
+    Returns:
+        Response: JSON response indicating success or failure of the booking creation.
+    """
     req = request.get_json()
     date = req['date']
     movie_id = req['movieid']

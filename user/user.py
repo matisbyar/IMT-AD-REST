@@ -8,11 +8,18 @@ app = Flask(__name__)
 PORT = 3203
 HOST = '0.0.0.0'
 
+# Load users data from JSON file
 with open('{}/databases/users.json'.format("."), "r") as jsf:
     users = json.load(jsf)["users"]
 
 
 def write(bookings):
+    """
+    Write the users data to the JSON file.
+
+    Args:
+        bookings (list): List of user dictionaries.
+    """
     data = {"users": bookings}
     with open('{}/databases/users.json'.format("."), 'w') as f:
         json.dump(data, f)
@@ -20,17 +27,38 @@ def write(bookings):
 
 @app.route("/", methods=['GET'])
 def home():
+    """
+    Home route that returns a welcome message.
+
+    Returns:
+        str: HTML string with a welcome message.
+    """
     return "<h1 style='color:blue'>Welcome to the User service!</h1>"
 
 
 @app.route("/users", methods=['GET'])
 def get_json():
+    """
+    Route to get all users.
+
+    Returns:
+        Response: JSON response containing all users.
+    """
     res = make_response(jsonify(users), 200)
     return res
 
 
 @app.route("/user/<userId>", methods=['GET'])
 def get_user_by_id(userId):
+    """
+    Route to get a user by their ID.
+
+    Args:
+        userId (str): ID of the user to retrieve.
+
+    Returns:
+        Response: JSON response containing the user data or an error message.
+    """
     for user in users:
         if str(user["id"]) == str(userId):
             res = make_response(jsonify(user), 200)
@@ -40,6 +68,15 @@ def get_user_by_id(userId):
 
 @app.route("/users/<userId>", methods=['POST'])
 def add_user(userId):
+    """
+    Route to add a new user.
+
+    Args:
+        userId (str): ID of the new user.
+
+    Returns:
+        Response: JSON response indicating success or failure of the user addition.
+    """
     req = request.get_json()
 
     for user in users:
@@ -54,6 +91,15 @@ def add_user(userId):
 
 @app.route("/user/<userId>", methods=['DELETE'])
 def del_user(userId):
+    """
+    Route to delete a user by their ID.
+
+    Args:
+        userId (str): ID of the user to delete.
+
+    Returns:
+        Response: JSON response containing the deleted user data or an error message.
+    """
     for user in users:
         if str(user["id"]) == str(userId):
             users.remove(user)
@@ -66,6 +112,15 @@ def del_user(userId):
 
 @app.route("/user/<userId>", methods=['PUT'])
 def update_user_lastactive(userId):
+    """
+    Route to update the last active timestamp of a user.
+
+    Args:
+        userId (str): ID of the user to update.
+
+    Returns:
+        Response: JSON response containing the updated user data or an error message.
+    """
     last_active = request.args.get('last_active')
 
     for user in users:
@@ -82,6 +137,15 @@ def update_user_lastactive(userId):
 
 @app.route("/user/<userId>/bookings/movies", methods=['GET'])
 def get_movies_from_usersbooking(userId):
+    """
+    Route to get movies from a user's bookings.
+
+    Args:
+        userId (str): ID of the user to retrieve bookings for.
+
+    Returns:
+        Response: JSON response containing the movies data or an error message.
+    """
     bookings_url = f"http://{request.remote_addr}:3201/bookings/{userId}"
     bookings = requests.get(bookings_url)
 
@@ -110,6 +174,12 @@ def get_movies_from_usersbooking(userId):
 
 @app.route("/help", methods=['GET'])
 def get_help_users():
+    """
+    Route to get help information about the available endpoints.
+
+    Returns:
+        Response: JSON response containing help information.
+    """
     help = [
         {"path_and_method": "GET /users", "description": "Get all users"},
         {"path_and_method": "GET /user/<userId>", "description": "Get user by ID"},
