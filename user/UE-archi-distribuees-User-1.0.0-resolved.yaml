@@ -29,7 +29,7 @@ paths:
               schema:
                 type: string
                 example: <h1>Test</h1>
-  /json:
+  /users:
     get:
       tags:
         - developers
@@ -66,6 +66,165 @@ paths:
                 $ref: '#/components/schemas/User'
         "400":
           description: No user with this ID
+  /users/{userId}:
+    post:
+      tags:
+        - developers
+      summary: add a new user
+      operationId: add_user
+      parameters:
+        - name: userId
+          in: path
+          description: identifier.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        description: User object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "200":
+          description: user added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: user added
+        "409":
+          description: user ID already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: user ID already exists
+  /user/{userId}:
+      delete:
+        tags:
+          - developers
+        summary: delete a user by its id
+        operationId: del_user
+        parameters:
+          - name: userId
+            in: path
+            description: identifier.
+            required: true
+            style: simple
+            explode: false
+            schema:
+              type: string
+        responses:
+          "200":
+            description: User deleted
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/User'
+          "400":
+            description: user not found
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: user not found
+  /user/{userId}:
+    put:
+      tags:
+        - developers
+      summary: update user last_active timestamp by its id
+      operationId: update_user_lastactive
+      parameters:
+        - name: userId
+          in: path
+          description: identifier.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: last_active
+          in: query
+          description: last active timestamp.
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "201":
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: user not found
+  /user/{userId}/bookings/movies:
+    get:
+      tags:
+        - developers
+      summary: Retrieve all user's bookings by their ID
+      operationId: get_movies_from_usersbooking
+      parameters:
+        - name: userId
+          in: path
+          description: identifier.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Movies from user's bookings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  movies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        director:
+                          type: string
+                        year:
+                          type: integer
+        "409":
+          description: User has no bookings or an error occurred while fetching a movie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User has no bookings
 components:
   schemas:
     AllUser:
