@@ -141,44 +141,43 @@ paths:
                     error:
                       type: string
                       example: user not found
-  /user/{userId}:
-    put:
-      tags:
-        - developers
-      summary: update user last_active timestamp by its id
-      operationId: update_user_lastactive
-      parameters:
-        - name: userId
-          in: path
-          description: identifier.
-          required: true
-          style: simple
-          explode: false
-          schema:
-            type: string
-        - name: last_active
-          in: query
-          description: last active timestamp.
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: User updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        "201":
-          description: user not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: user not found
+      put:
+        tags:
+          - developers
+        summary: update user last_active timestamp by its id
+        operationId: update_user_lastactive
+        parameters:
+          - name: userId
+            in: path
+            description: identifier.
+            required: true
+            style: simple
+            explode: false
+            schema:
+              type: string
+          - name: last_active
+            in: query
+            description: last active timestamp.
+            required: true
+            schema:
+              type: integer
+        responses:
+          "200":
+            description: User updated
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/User'
+          "201":
+            description: user not found
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: user not found
   /user/{userId}/bookings/movies:
     get:
       tags:
