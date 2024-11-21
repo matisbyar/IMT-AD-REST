@@ -224,8 +224,29 @@ paths:
                   error:
                     type: string
                     example: User has no bookings
+  /help:
+    get:
+      tags:
+        - developers
+      summary: get all endpoints
+      description: List all endpoints of the API
+      operationId: get_help_movies
+      responses:
+        "200":
+          description: full JSON
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIEndpoint'
+        "400":
+          description: bad input parameter
 components:
   schemas:
+    APIEndpoint:
+      type: object
+      required:
+        - path_and_method
+        - description
     AllUser:
       required:
         - users
